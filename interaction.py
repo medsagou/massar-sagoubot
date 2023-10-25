@@ -6,13 +6,14 @@ Created on Wed Apr 26 22:49:39 2023
 """
 import os
 import sys
-import time
 from dotenv import load_dotenv
+from print_sagou import print_info, print_error, print_success
 
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
 
 
 load_dotenv()  # loading the environment variables from the .env file
@@ -28,17 +29,17 @@ class Massar_Sagou:
     def get_driver(self):
         self.driver = uc.Chrome()
         self.driver.maximize_window()
-        print("NOTE: DRIVER CONNECTED")
+        print_success("DRIVER CONNECTED")
         return
 
     def get_site(self):
         try:
             self.driver.get(os.getenv("OFFICIAL_SITE"))
         except:
-            print("ERROR: WE CAN OPEN THE BROWSER")
+            print_error("WE CAN OPEN THE BROWSER")
             self.exit_program()
         else:
-            print("NOTE: OPENING THE SITE")
+            print_info("SITE OPENED")
             return True
 
 
@@ -54,20 +55,20 @@ class Massar_Sagou:
         finally:
             username = self.driver.find_element(By.ID, "UserName")
             username.send_keys(os.getenv("EMAIL"))
-            print("NOTE: USERNAME FIELD DONE")
+            print_info("USERNAME FIELD DONE")
         return
 
     def fill_password(self):
         password = self.driver.find_element(By.ID, "Password")
         password.send_keys(os.getenv("PASSWORD"))
-        print("NOTE: PASSWORD FIELD DONE")
+        print_info("PASSWORD FIELD DONE")
         return
 
     def submit_form(self):
         # submit the form
         sumbit_button = self.driver.find_element(By.ID, "btnSubmit")
         sumbit_button.click()
-        print("NOTE: BUTTON CLICKED")
+        print_info("BUTTON CLICKED")
 
         # checking if we've getting any error while submiting the form
         if not self.check_error_login():
@@ -80,13 +81,13 @@ class Massar_Sagou:
                     )
                 )
             except:
-                print("ERROR: PLEASE CHECK YOUR LOGIN INFORMATION AND TRY AGAIN.")
+                print_error("PLEASE CHECK YOUR LOGIN INFORMATION AND TRY AGAIN.")
                 self.exit_program()
             else:
-                print("NOTE: WE HAVE SUCCESSFULLY LOGGED INTO YOUR ACCOUNT")
+                print_success("WE HAVE SUCCESSFULLY LOGGED INTO YOUR ACCOUNT")
             return
         else:
-            print("ERROR: PLEASE CHECK YOUR LOGIN INFORMATION AND TRY AGAIN.")
+            print_error("ERROR: PLEASE CHECK YOUR LOGIN INFORMATION AND TRY AGAIN.")
             self.exit_program()
 
 
@@ -109,13 +110,17 @@ class Massar_Sagou:
         return
 
     def close_tab(self):
-        self.driver.close()
+        self.driver.quit()
         return
 
     def exit_program(self):
-        print("EXITING THE PROGRAM -- GOODBYE TEACHER --")
-        self.close_tab()
-        sys.exit()
+        print_info("EXITING THE PROGRAM -- GOODBYE TEACHER --")
+
+        try:
+            self.driver.quit()
+            sys.exit()
+        except:
+            sys.exit()
 
     def main_interaction(self):
         self.get_driver()
@@ -123,6 +128,5 @@ class Massar_Sagou:
         self.fill_username()
         self.fill_password()
         self.submit_form()
-        time.sleep(20)
-        self.close_tab()
+        self.exit_program()
 # end of Massar_Sagou class
