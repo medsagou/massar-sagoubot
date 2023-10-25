@@ -109,7 +109,7 @@ class Massar_Sagou:
         return
 
     def close_tab(self):
-        self.driver.quit()
+        self.driver.close()
         return
 
     def exit_program(self):
