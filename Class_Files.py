@@ -8,6 +8,8 @@ import os
 import os.path
 from os import chdir, mkdir
 
+
+from print_sagou import *
 class C_Dossier():
 
    
@@ -37,14 +39,14 @@ import os.path
 from Module_Classe_Liste import C_Liste
             
 
-class C_Fichier():
+class C_File():
     #____________________________________________________________________________________________________________________________________________________________
     # Le constructeur d'une instance d'un fichier
     # Ce constructeur permet d'attribuer à une instance de fichier son nom (vide par défaut) 
     # Ce constructeur permet de spécifier le séparateur des éléments s'il existe (également vide par défauté)su
     # Un séparateur peut être un ";", une "," un "#', etc.  
-    def __init__(self,NF="",sep="|", sep2="+"):
-        self.nomFichier=NF
+    def __init__(self,file_name="",sep=";", sep2="+"):
+        self.nomFichier=file_name
         self.separateur=sep
         self.separateur2=sep2
     
@@ -68,13 +70,13 @@ class C_Fichier():
                 break  
     #____________________________________________________________________________________________________________________________________________________________
     # Créer un fichier vide sans supprimer le fichier de même nom s'il existe
-    def creer_fichier_1(self):
+    def create_file(self):
         f = open(self.nomFichier,"x") #Création d'un fichier vide. Ici, le fichier n'est pas écrasé contrairement au mode 'w'  
         f.close()
     
     #____________________________________________________________________________________________________________________________________________________________
     # Créer un fichier vide avec suppression du fichier de même nom s'il existe
-    def creer_fichier_2(self):
+    def create_file_2(self):
         f = open(self.nomFichier,"w") #Création d'un fichier vide. Ici, le fichier existant qui porte le même nom est écrasé contrairement mode 'x'  
         f.close()
     
@@ -130,8 +132,18 @@ class C_Fichier():
     def str_to_fichier(self,string):
         with open(self.nomFichier,'a') as F:   # Ouverture du fichier en mode écriture : à ce niveau si le fichier existe il va être écrasé
              F.write(string)
+             F.write("\n")
         return
-             
+
+    def dict_to_file(self, D):
+        if type(D) == dict and D != {}:
+            with open(self.nomFichier, 'w') as F:
+                for c, v in D.items():
+                    F.write(str(c) + ";" + str(v))
+                    F.write("\n")
+            return True
+        else:
+            print_error("WE HAD A PROBLEM WHILE SAVING YOUR DICT")
              
     def Liste_to_str_to_Fichier(self,Liste_1): 
        Liste = self.Liste_to_Str1(Liste_1)

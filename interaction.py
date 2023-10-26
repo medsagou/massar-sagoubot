@@ -7,7 +7,9 @@ Created on Wed Apr 26 22:49:39 2023
 import os
 import sys
 from dotenv import load_dotenv
-from print_sagou import print_info, print_error, print_success
+from print_sagou import *
+from ui import User_Interface
+from Class_Files import C_File
 
 import undetected_chromedriver_modified_sagou as ucg
 from selenium import webdriver
@@ -23,7 +25,7 @@ import chromedriver_autoinstaller
 load_dotenv()  # loading the environment variables from the .env file
 
 
-from class_fichier import C_Fichier
+
 
 
 class Massar_Sagou:
@@ -36,7 +38,7 @@ class Massar_Sagou:
         opt.add_argument("--start-maximized")
         # chromedriver_autoinstaller.install()
         # self.driver = webdriver.Firefox(options=opt)
-        self.driver = ucg.Chrome()
+        self.driver = webdriver.Firefox()
         self.driver.maximize_window()
         print_success("DRIVER CONNECTED")
         return
@@ -114,6 +116,34 @@ class Massar_Sagou:
         else:
             return True
 
+    def get_classes_from_main_page(self):
+        main_xpath = '//*[@id="ClassesDiv"]/div[2]/div/table/tbody/tr'
+        try:
+            rows = self.driver.find_elements(By.XPATH, main_xpath)
+        except:
+            print_error("WE COULD NOT FIND YOUR CLASSES FROM THE MAIN PAGE")
+            return False
+        else:
+            if len(rows) != 0:
+                D = {}
+                for row in range(1 , len(rows) + 1):
+                    class_name = self.driver.find_element(By.XPATH, main_xpath + "[" + str(row) + "]/td[1]")
+                    etd_num = self.driver.find_element(By.XPATH, main_xpath + "[" + str(row) + "]/td[2]")
+                    D[str(class_name.text)] = int(etd_num.text.replace("+", ""))
+
+                #export to les_class-ed_num.txt
+                class_etd_File = C_File(file_name="db/les_class_etd_num.txt")
+                class_etd_File.dict_to_file(D)
+
+                #export to menu.txt
+                ch = "001"
+                for c, v in D.items():
+                    ch = str(ch) + ";" + str(c) + "+" + str(v)
+
+                class_etd_to_menu = C_File(file_name="db/menu.txt")
+                class_etd_to_menu.str_to_fichier(ch)
+
+                return D
 
     def export_data(self):
         return
@@ -135,4 +165,9 @@ class Massar_Sagou:
         self.fill_password()
         self.submit_form()
         #_____________________________
+        # ui = User_Interface()
+        # ui.main_page(self.get_classes_from_main_page())
+        # ui.main_menu()
+
+
 # end of Massar_Sagou class
