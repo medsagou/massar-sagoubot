@@ -9,10 +9,14 @@ import sys
 from dotenv import load_dotenv
 from print_sagou import print_info, print_error, print_success
 
-import undetected_chromedriver as uc
+import undetected_chromedriver_modified_sagou as ucg
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
+
+import chromedriver_autoinstaller
 
 
 
@@ -23,11 +27,16 @@ from class_fichier import C_Fichier
 
 
 class Massar_Sagou:
-    def __init__(self, ):
+    def __init__(self, driver = ""):
+        self.driver=driver
         return
 
     def get_driver(self):
-        self.driver = uc.Chrome()
+        opt = webdriver.FirefoxOptions()
+        opt.add_argument("--start-maximized")
+        # chromedriver_autoinstaller.install()
+        # self.driver = webdriver.Firefox(options=opt)
+        self.driver = ucg.Chrome()
         self.driver.maximize_window()
         print_success("DRIVER CONNECTED")
         return
@@ -115,12 +124,9 @@ class Massar_Sagou:
 
     def exit_program(self):
         print_info("EXITING THE PROGRAM -- GOODBYE TEACHER --")
-
-        try:
-            self.driver.quit()
-            sys.exit()
-        except:
-            sys.exit()
+        self.driver.close()
+        self.driver.quit()
+        sys.exit()
 
     def main_interaction(self):
         self.get_driver()
@@ -128,5 +134,5 @@ class Massar_Sagou:
         self.fill_username()
         self.fill_password()
         self.submit_form()
-        self.exit_program()
+        #_____________________________
 # end of Massar_Sagou class
