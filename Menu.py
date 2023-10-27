@@ -7,14 +7,16 @@ Created on Sat Feb  4 14:20:34 2023
 
 from Class_Files import C_File
 from print_sagou import *
+import os
 
-
-class Menu():
+class Menu:
     " classe générique de gestion de menu"
 
     def __init__(self, L=[], menu_index = 0):
         self.list = L
         self.menu_index = menu_index
+        self.ch = None
+        self.returned_value = ""
 
     def print_menu(self):
         print('')
@@ -37,7 +39,10 @@ class Menu():
                 print("! Le nombre saisi doit être supérieur ou égal à 1 et inférieur ou égal à " + str(
                     len(self.list)) + ".\n")
             else:
+                self.ch = i
+                self.returned_value = self.list[i-1]
                 return i
+
 
     def get_menu_db(self, menu_id):
         menuFichier = C_File('db/menu.txt', sep=";")

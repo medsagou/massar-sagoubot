@@ -1,7 +1,11 @@
+import sys
 import time
+from print_sagou import *
+import pandas as pd
+from io import StringIO
+from Menu import Menu
 
 from selenium.webdriver.common.by import By
-from print_sagou import *
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 
@@ -9,10 +13,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-class List_Reader():
-
-    def __int__(self, driver=""):
+class List_Reader:
+    def __init__(self, driver="",  class_name_to_extract=""):
         self.driver = driver
+        self.class_name_to_extract = class_name_to_extract
 
 
     def get_list_page(self):
@@ -56,43 +60,51 @@ class List_Reader():
                     Classe_Select = Select(Classe)
 
                     for Classe_option in Classe_all_options:
-                        Classe_Select.select_by_value(Classe_option.get_attribute("value"))
-                        searchBtn.click()
-                        try:
-                            WebDriverWait(self.driver, 3).until(
-                                EC.invisibility_of_element_located(
-                                    (
-                                        By.ID, "loadingDiv",
+                        if self.class_name_to_extract != "" and self.class_name_to_extract == Classe_option.text:
+                            Classe_Select.select_by_value(Classe_option.get_attribute("value"))
+                            searchBtn.click()
+                            try:
+                                WebDriverWait(self.driver, 3).until(
+                                    EC.invisibility_of_element_located(
+                                        (
+                                            By.ID, "loadingDiv",
+                                        )
                                     )
                                 )
-                            )
-                        except:
-                            continue
+                            except:
+                               print_error("CHECK YOUR INTERNET CONNECTION THEN TRY AGAIN")
+                            else:
+                                self.get_class_list(Classe_option.text)
+                                break
+
+                        else:
+                            Classe_Select.select_by_value(Classe_option.get_attribute("value"))
+                            searchBtn.click()
+                            try:
+                                WebDriverWait(self.driver, 3).until(
+                                    EC.invisibility_of_element_located(
+                                        (
+                                            By.ID, "loadingDiv",
+                                        )
+                                    )
+                                )
+                            except:
+                                continue
+                            else:
+                                self.get_class_list(Classe_option.text)
         return
 
-    def get_class_list(self):
-        main_xpath = '/html/body/div/div[1]/div[2]/div[2]/section[2]/div[2]/div/div/div/div[2]/div/div[2]/div/div/div/div/div[2]/div/table'
+    def get_class_list(self, class_name):
+        table_xpath = '/html/body/div/div[1]/div[2]/div[2]/section[2]/div[2]/div/div/div/div[2]/div/div[2]/div/div/div/div/div[2]/div/table'
         try:
-            table = self.driver.find_elements(By.XPATH, main_xpath)
+            df = pd.read_html(StringIO(self.driver.find_element(By.XPATH, table_xpath).get_attribute('outerHTML')))[0]
         except:
-            print_error("WE COULD NOT FIND YOUR CLASS List")
-            return False
+            print_error("WE CANNOT FIND THE DATA TABLE")
         else:
-            # to continue here
+            print_info(f"EXTRACTING THE LIST OF {class_name}")
+            df.to_excel(f"db/classes_list/{class_name}.xlsx")
+        return
 
-                #export to les_class-ed_num.txt
-                class_etd_File = C_File(file_name="db/les_class_etd_num.txt")
-                class_etd_File.dict_to_file(D)
-
-                #export to menu.txt
-                ch = "001"
-                for c, v in D.items():
-                    ch = str(ch) + ";" + str(c) + "+" + str(v)
-
-                class_etd_to_menu = C_File(file_name="db/menu.txt")
-                class_etd_to_menu.str_to_fichier(ch)
-
-                return D
 
     def main_list_reader(self):
         self.get_list_page()

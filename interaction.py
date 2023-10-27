@@ -138,7 +138,7 @@ class Massar_Sagou:
                 #export to menu.txt
                 ch = "001"
                 for c, v in D.items():
-                    ch = str(ch) + ";" + str(c) + "+" + str(v)
+                    ch = str(ch) + ";" + str(c)
 
                 class_etd_to_menu = C_File(file_name="db/menu.txt")
                 class_etd_to_menu.str_to_fichier(ch)
@@ -165,9 +165,9 @@ class Massar_Sagou:
         self.fill_password()
         self.submit_form()
         #_____________________________
-        # ui = User_Interface()
-        # ui.main_page(self.get_classes_from_main_page())
-        # ui.main_menu()
+
+
+
 
 
 # end of Massar_Sagou class

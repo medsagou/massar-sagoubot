@@ -11,8 +11,9 @@ def print_info(message):
 def print_dict(D):
     if type(D) is dict:
         for c, v in D.items():
-            print("{:<10} {:<10}".format(c, v))
+            print("{:<12} {:<12}".format(c, v))
     else:
         print_error("WE CANNOT PRINT YOUR DICTIONARY")
         return False
+
 
