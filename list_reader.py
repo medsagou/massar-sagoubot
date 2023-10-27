@@ -60,22 +60,25 @@ class List_Reader:
                     Classe_Select = Select(Classe)
 
                     for Classe_option in Classe_all_options:
-                        if self.class_name_to_extract != "" and self.class_name_to_extract == Classe_option.text:
-                            Classe_Select.select_by_value(Classe_option.get_attribute("value"))
-                            searchBtn.click()
-                            try:
-                                WebDriverWait(self.driver, 3).until(
-                                    EC.invisibility_of_element_located(
-                                        (
-                                            By.ID, "loadingDiv",
+                        if self.class_name_to_extract != "":
+                            if self.class_name_to_extract == Classe_option.text:
+                                Classe_Select.select_by_value(Classe_option.get_attribute("value"))
+                                searchBtn.click()
+                                try:
+                                    WebDriverWait(self.driver, 3).until(
+                                        EC.invisibility_of_element_located(
+                                            (
+                                                By.ID, "loadingDiv",
+                                            )
                                         )
                                     )
-                                )
-                            except:
-                               print_error("CHECK YOUR INTERNET CONNECTION THEN TRY AGAIN")
+                                except:
+                                   print_error("CHECK YOUR INTERNET CONNECTION THEN TRY AGAIN")
+                                else:
+                                    self.get_class_list(Classe_option.text)
+                                    return
                             else:
-                                self.get_class_list(Classe_option.text)
-                                break
+                                continue
 
                         else:
                             Classe_Select.select_by_value(Classe_option.get_attribute("value"))
@@ -102,7 +105,7 @@ class List_Reader:
             print_error("WE CANNOT FIND THE DATA TABLE")
         else:
             print_info(f"EXTRACTING THE LIST OF {class_name}")
-            df.to_excel(f"db/classes_list/{class_name}.xlsx")
+            df.to_excel(f"db/classes_list/{class_name}.xlsx", index=False)
         return
 
 
